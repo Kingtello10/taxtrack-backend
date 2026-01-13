@@ -4,10 +4,9 @@ const path = require('path');
 const { uploadReceipt, getReceipts } = require('../controllers/receipt.controller');
 const authMiddleware = require('../middleware/auth.middleware');
 
-// Configure multer
 const storage = multer.diskStorage({
   destination: function(req, file, cb) {
-    cb(null, 'uploads/'); // make sure this folder exists
+    cb(null, 'uploads/'); 
   },
   filename: function(req, file, cb) {
     cb(null, Date.now() + path.extname(file.originalname));
@@ -16,7 +15,11 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 router.post('/', authMiddleware, upload.single('file'), uploadReceipt);
+
 router.get('/', authMiddleware, getReceipts);
 
-module.exports = router;
+router.get('/test', (req, res) => {
+  res.json({ message: 'Receipts API is working' });
+});
 
+module.exports = router;
