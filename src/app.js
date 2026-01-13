@@ -9,7 +9,10 @@ const receiptRoutes = require('./routes/receipt.routes');
 const app = express();
 
 // Middleware
-app.use(cors()); // Allow requests from anywhere
+app.use(cors({
+  origin: ['http://127.0.0.1:5500', 'http://localhost:5500'], // your local frontend URLs
+  credentials: true
+}));
 app.use(express.json()); // Parse JSON bodies
 app.use(express.urlencoded({ extended: true }));
 
@@ -21,7 +24,9 @@ app.use('/api/receipts', receiptRoutes);
 // Health check endpoint
 app.get('/api/health', (_, res) => {
   res.json({ status: 'online' });
-  app.get('/', (req, res) => res.send('TaxTrack API running'));
 });
+
+// Root endpoint
+app.get('/', (req, res) => res.send('TaxTrack API running'));
 
 module.exports = app;
