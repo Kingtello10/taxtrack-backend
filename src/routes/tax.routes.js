@@ -1,8 +1,8 @@
 const router = require('express').Router();
-const { addTax, getTaxes } = require('../controllers/tax.controller');
+const { addTransaction, getTransactions } = require('../controllers/tax.controller');
 const authMiddleware = require('../middleware/auth.middleware');
 
-router.post('/', authMiddleware, addTax);   
-router.get('/', authMiddleware, getTaxes);  
+router.post('/', authMiddleware, addTransaction);
+router.get('/', authMiddleware, getTransactions);
 
 module.exports = router;
