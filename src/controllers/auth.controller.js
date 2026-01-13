@@ -4,7 +4,11 @@ const jwt = require('jsonwebtoken');
 
 exports.register = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { fullName, email, password } = req.body;
+
+    if (!email || !password) {
+      return res.status(400).json({ message: 'Email and password are required' });
+    }
 
     const existingUser = await User.findOne({ email });
     if (existingUser) {
@@ -14,13 +18,19 @@ exports.register = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const user = await User.create({
+      fullName: fullName || '',
       email,
       password: hashedPassword
     });
 
     res.status(201).json({
       message: 'User created successfully',
-      user: { id: user._id, email: user.email }
+      user: {
+        id: user._id,
+        fullName: user.fullName,
+        email: user.email,
+        role: user.role
+      }
     });
   } catch (err) {
     console.error('REGISTER ERROR:', err);
@@ -31,6 +41,10 @@ exports.register = async (req, res) => {
 exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res.status(400).json({ message: 'Email and password are required' });
+    }
 
     const user = await User.findOne({ email });
     if (!user) {
@@ -43,7 +57,7 @@ exports.login = async (req, res) => {
     }
 
     const token = jwt.sign(
-      { id: user._id },
+      { id: user._id, role: user.role },
       process.env.JWT_SECRET,
       { expiresIn: '7d' }
     );
@@ -52,7 +66,9 @@ exports.login = async (req, res) => {
       token,
       user: {
         id: user._id,
-        email: user.email
+        fullName: user.fullName,
+        email: user.email,
+        role: user.role
       }
     });
   } catch (err) {
