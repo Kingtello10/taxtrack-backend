@@ -15,31 +15,29 @@ exports.verifyToken = (req, res, next) => {
   }
 };
 
+// Add a transaction
 exports.addTransaction = async (req, res) => {
   try {
-    const { amount, type, description, date } = req.body;
-
-    if (!amount || !type) return res.status(400).json({ message: 'Amount and type are required' });
-
-    const transaction = await Tax.create({
-      userId: req.userId,
-      amount,
+    const { type, amount, date, details } = req.body;
+    const tax = await Tax.create({
+      user: req.user.id,
       type,
-      description: description || '',
-      date: date || new Date()
+      amount,
+      date,
+      details
     });
-
-    res.status(201).json(transaction);
+    res.status(201).json(tax);
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'Server error' });
   }
 };
 
+// Get all transactions for a user
 exports.getTransactions = async (req, res) => {
   try {
-    const transactions = await Tax.find({ userId: req.userId });
-    res.json(transactions);
+    const taxes = await Tax.find({ user: req.user.id });
+    res.json(taxes);
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'Server error' });
