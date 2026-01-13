@@ -1,4 +1,3 @@
-// src/models/Tax.js
 const mongoose = require('mongoose');
 
 const TaxSchema = new mongoose.Schema({
